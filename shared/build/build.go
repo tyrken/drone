@@ -437,7 +437,7 @@ func (b *Builder) writeDockerfile(dir string) error {
 	// upload source code if repository is stored
 	// on the host machine
 	if b.Repo.IsRemote() == false {
-		dockerfile.WriteAdd("src", filepath.Join(b.Repo.Dir))
+		dockerfile.WriteAdd("src", strings.Replace(filepath.Join(b.Repo.Dir), "\\", "/", -1))
 	}
 
 	switch {

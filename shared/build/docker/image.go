@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/docker/docker/pkg/archive"
@@ -96,7 +97,16 @@ func (c *ImageService) Inspect(name string) (*Image, error) {
 
 // Build the Image
 func (c *ImageService) Build(tag, dir string) error {
+	cmd := exec.Command("docker", "build", "-t", tag, dir)
+  if err := cmd.Run(); err != nil {
+  	fmt.Printf("Failed to docker build! err = %s\n", err)
+  	return err
+  }
+  return nil
+}
 
+
+func (c *ImageService) BuildOld(tag, dir string) error {
 	// tar the file
 	context, err := archive.Tar(dir, archive.Uncompressed)
 	if err != nil {

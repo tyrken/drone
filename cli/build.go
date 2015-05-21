@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"strings"
 
 	"github.com/drone/drone/shared/build"
 	"github.com/drone/drone/shared/build/docker"
@@ -162,6 +163,7 @@ func run(path, identity, dockerhost, dockercert, dockerkey string, publish, depl
 	// this is where the code gets uploaded to the container
 	// TODO move this code to the build package
 	code.Dir = filepath.Join("/var/cache/drone/src", filepath.Clean(code.Dir))
+	code.Dir = strings.Replace(code.Dir, "\\", "/", -1)
 
 	// ssh key to import into container
 	var key []byte

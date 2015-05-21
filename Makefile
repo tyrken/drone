@@ -10,7 +10,7 @@ deps:
 
 docker:
 	mkdir -p $$GOPATH/src/github.com/docker/docker
-	git clone --depth=1 --branch=v1.5.0 git://github.com/docker/docker.git $$GOPATH/src/github.com/docker/docker
+	git clone --depth=1 --branch=v1.5.0 https://github.com/docker/docker.git $$GOPATH/src/github.com/docker/docker
 
 test:
 	@test -z "$(shell find . -name '*.go' | xargs gofmt -l)" || (echo "Need to run 'go fmt ./...'"; exit 1)
@@ -24,6 +24,10 @@ test_mysql:
 
 test_postgres:
 	TEST_DRIVER="postgres" TEST_DATASOURCE="host=127.0.0.1 user=postgres dbname=postgres sslmode=disable" go test -short github.com/drone/drone/server/datastore/database
+
+windows-cli:
+	mkdir -p packaging/root/usr/local/bin
+	GOOS=windows GOARCH=amd64	go build -o packaging/root/usr/local/bin/drone  -ldflags "-X main.revision $(SHA) -X main.version $(VERSION)" github.com/drone/drone/cli
 
 build:
 	mkdir -p packaging/output
