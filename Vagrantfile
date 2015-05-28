@@ -19,23 +19,22 @@ Vagrant.configure("2") do |config|
     export GOPATH=/opt/go
     export PATH=$PATH:$GOPATH/bin
 
-    echo "Installing Go $GOVERSION"
-    if [ ! $(which go) ]; then
-        echo "    Configuring GOPATH"
-        sudo mkdir -p $GOPATH/src $GOPATH/bin $GOPATH/pkg
-        sudo chown -R vagrant $GOPATH
+    echo "    Configuring GOPATH"
+    sudo mkdir -p $GOPATH/src $GOPATH/bin $GOPATH/pkg
+    sudo chown -R vagrant:vagrant $GOPATH
 
-        echo "    Configuring env vars"
-        echo "export PATH=\$PATH:$GOPATH/bin" | sudo tee /etc/profile.d/golang.sh > /dev/null
-        echo "export GOROOT=$GOROOT" | sudo tee --append /etc/profile.d/golang.sh > /dev/null
-        echo "export GOPATH=$GOPATH" | sudo tee --append /etc/profile.d/golang.sh > /dev/null
-    fi
+    echo "    Configuring env vars"
+    echo "export PATH=\$PATH:$GOPATH/bin" | sudo tee /etc/profile.d/golang.sh > /dev/null
+    echo "export GOPATH=$GOPATH" | sudo tee --append /etc/profile.d/golang.sh > /dev/null
 
     # Install drone
     echo "Building Drone"
     cd $GOPATH/src/github.com/drone/drone
+    make docker
+    sudo chown -R vagrant:vagrant $GOPATH
     make deps
-    chown -R vagrant:vagrant /opt/go
+    make
+    ls -al packaging/root/usr/local/bin
 
     # Auto cd to drone install dir
     echo "cd /opt/go/src/github.com/drone/drone" >> /home/vagrant/.bashrc
